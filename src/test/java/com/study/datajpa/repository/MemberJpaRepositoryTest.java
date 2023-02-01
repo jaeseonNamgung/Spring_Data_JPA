@@ -83,4 +83,20 @@ class MemberJpaRepositoryTest {
 
     }
 
+    @Test
+    void testNamedQuery() throws Exception{
+        // given
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("BBB", 20);
+        memberJpaRepository.save(m1);
+        memberJpaRepository.save(m2);
+        // when
+        List<Member> result = memberJpaRepository.findByUsername("AAA");
+        Member findMember = result.get(0);
+        // then
+        assertThat(findMember).isEqualTo(m1);
+    }
+
+
+
 }
