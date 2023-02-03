@@ -1,5 +1,6 @@
 package com.study.datajpa.entity;
 
+import com.study.datajpa.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +18,8 @@ class MemberTest {
 
     @Autowired
     EntityManager em;
+    @Autowired
+    MemberRepository memberRepository;
 
     @Test
     void testEntity() throws Exception{
@@ -48,6 +51,23 @@ class MemberTest {
         }
 
         // then
+    }
+    @Test
+    void JpaEventBaseEntity() throws Exception{
+        // given
+        Member member = new Member("member1");
+        memberRepository.save(member); // @PrePersist 발생
+        Thread.sleep(100);
+        member.setUsername("member2");
+        em.flush(); // @PreUpdate 발생
+        em.clear();;
+        // when
+        Member findMember = memberRepository.findById(member.getId()).get();
+        // then
+        System.out.println("CreatedDate = " + findMember.getCreatedDate());
+        System.out.println("UpdatedDate = " + findMember.getLastModifiedDate());
+        System.out.println("createdBy = " + findMember.getCreateBy());
+        System.out.println("updatedBy = " + findMember.getLastModifiedBy());
     }
 
 }
